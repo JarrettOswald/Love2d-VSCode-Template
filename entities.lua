@@ -1,12 +1,10 @@
-local Entities = {}
-Entities.__index = Entities
+local Object = require "lib/classic"
+local Entities = Object:extend()
 
 function Entities:new()
-    return setmetatable({
-        list = {},
-        pool = {},
-        toRemove = {},
-    }, self)
+    self.list = {}
+    self.pool = {}
+    self.toRemove = {}
 end
 
 function Entities:add(ent)
