@@ -8,7 +8,6 @@ function love.load()
 		ball = true
 	}
 	tinyWorld:addEntity(ballEntity)
-
 	tinyWorld:addSystem(DrawSystem())
 end
 
@@ -17,10 +16,5 @@ function love.update(dt)
 end
 
 function love.draw()
-	for i = 1, #tinyWorld.systems do
-		local system = tinyWorld.systems[i]
-		if system.draw then
-			system:draw()
-		end
-	end
+	tinyWorld:draw()
 end

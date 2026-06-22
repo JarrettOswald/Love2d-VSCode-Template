@@ -1,8 +1,12 @@
 local tiny = require("lib.tiny")
 
 function DrawSystem()
-    local system = tiny.system()
+    local system = tiny.processingSystem()
     system.filter = tiny.requireAll("position", "ball")
+
+    function system:process()
+        print("DrawSystem:process() called")
+    end
 
     function system:draw()
         for i = 1, #self.entities do

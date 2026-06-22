@@ -93,7 +93,6 @@ local filterJoin
 local filterBuildString
 
 do
-
     local loadstring = loadstring or load
     local function getchr(c)
         return "\\" .. c:byte()
@@ -164,7 +163,6 @@ do
         end
         return loader()
     end
-
 end
 
 --- Makes a Filter that selects Entities with all specified Components and
@@ -459,6 +457,7 @@ function tiny.addEntity(world, entity)
     e2c[#e2c + 1] = entity
     return entity
 end
+
 tiny_addEntity = tiny.addEntity
 
 --- Adds a System to the world. Returns the System.
@@ -469,6 +468,7 @@ function tiny.addSystem(world, system)
     system.world = world
     return system
 end
+
 tiny_addSystem = tiny.addSystem
 
 --- Shortcut for adding multiple Entities and Systems to the World. Returns all
@@ -486,6 +486,7 @@ function tiny.add(world, ...)
     end
     return ...
 end
+
 tiny_add = tiny.add
 
 --- Removes an Entity from the World. Returns the Entity.
@@ -494,6 +495,7 @@ function tiny.removeEntity(world, entity)
     e2r[#e2r + 1] = entity
     return entity
 end
+
 tiny_removeEntity = tiny.removeEntity
 
 --- Removes a System from the world. Returns the System.
@@ -503,6 +505,7 @@ function tiny.removeSystem(world, system)
     s2r[#s2r + 1] = system
     return system
 end
+
 tiny_removeSystem = tiny.removeSystem
 
 --- Shortcut for removing multiple Entities and Systems from the World. Returns
@@ -612,7 +615,6 @@ end
 
 -- Adds, removes, and changes Entities that have been marked.
 function tiny_manageEntities(world)
-
     local e2r = world.entitiesToRemove
     local e2c = world.entitiesToChange
 
@@ -732,7 +734,6 @@ end
 -- Systems. If `filter` is not supplied, all Systems are updated. Put this
 -- function in your main loop.
 function tiny.update(world, dt, filter)
-
     tiny_manageSystems(world)
     tiny_manageEntities(world)
 
@@ -759,7 +760,6 @@ function tiny.update(world, dt, filter)
     for i = 1, #systems do
         local system = systems[i]
         if system.active and ((not filter) or filter(world, system)) then
-
             -- Update Systems that have an update method (most Systems)
             local update = system.update
             if update then
@@ -789,7 +789,23 @@ function tiny.update(world, dt, filter)
             postWrap(system, dt)
         end
     end
+end
 
+function tiny.draw(world, filter)
+    local systems = world.systems
+
+    for i = 1, #systems do
+        local system = systems[i]
+        if system.active and ((not filter) or filter(world, system)) then
+            -- Update Systems that have an draw method (most Systems)
+            local draw = system.draw
+            if draw then
+                draw(system)
+            end
+
+            system.modified = false
+        end
+    end
 end
 
 --- Removes all Entities from the World.
@@ -851,6 +867,7 @@ worldMetaTable = {
         removeSystem = tiny.removeSystem,
         refresh = tiny.refresh,
         update = tiny.update,
+        draw = tiny.draw,
         clearEntities = tiny.clearEntities,
         clearSystems = tiny.clearSystems,
         getEntityCount = tiny.getEntityCount,
